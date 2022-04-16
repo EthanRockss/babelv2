@@ -1,14 +1,20 @@
 import discord
-from discord.ext import commands
 import json
 import os
+from discord.ext import commands
+from configCreation import ConfigCreation
 
-# Get configuration.json
-with open("configuration.json", "r") as config: 
-	data = json.load(config)
-	token = data["token"]
-	prefix = data["prefix"]
-	owner_id = data["owner_id"]
+
+# Attempt to get configuration file if unable create one
+for i in range(5):
+	try:
+		with open("configuration.json", "r") as config: 
+			data = json.load(config)
+			token = data["token"]
+			prefix = data["prefix"]
+			owner_id = data["owner_id"]
+	except OSError as e:
+		ConfigCreation.createDefaultConfig()
 
 
 class Greetings(commands.Cog):

@@ -10,7 +10,6 @@ class PingCog(commands.Cog, name="ping command"):
 	@commands.command(name = "ping",
 					usage="",
 					description = "Display the bot's ping.")
-	@commands.cooldown(1, 2, commands.BucketType.member)
 	async def ping(self, ctx):
 		before = time.monotonic()
 		message = await ctx.send("🏓 Pong !")

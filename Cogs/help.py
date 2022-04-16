@@ -11,7 +11,6 @@ class HelpCog(commands.Cog, name="help command"):
 					usage="(commandName)",
 					description = "Display the help message.",
 					aliases = ['h', '?'])
-	@commands.cooldown(1, 2, commands.BucketType.member)
 	async def help (self, ctx, commandName:str=None):
 
 		commandName2 = None
