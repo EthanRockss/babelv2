@@ -23,7 +23,7 @@ class Greetings(commands.Cog):
 		self._last_member = None
 
 # Intents
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 # The bot
 bot = commands.Bot(prefix, intents = intents, owner_id = owner_id)
 
