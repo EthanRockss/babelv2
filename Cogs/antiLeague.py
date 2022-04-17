@@ -4,6 +4,8 @@ import datetime
 import pytz
 from discord.ext import commands, tasks
 
+from babelv2.configCreation import ConfigCreation
+
 DEFAULT_CONFIG = {
     "time": 15,
 }
@@ -56,10 +58,7 @@ try:
         timeSet = data["time"]
     config.close()
 except OSError as e:
-    print("Config file not found...\nCreating...")
-    with open("Cogs/Configs/antiLeagueConfig.json", "w") as config:
-        json.dump(DEFAULT_CONFIG, config, ensure_ascii=False,indent=4)
-    config.close()
+    ConfigCreation.createConfig("antiLeagueConfig", DEFAULT_CONFIG, True)
 
 def setup(bot:commands.Bot):
     bot.add_cog(CogName(bot))

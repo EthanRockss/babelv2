@@ -4,6 +4,11 @@ import os
 from discord.ext import commands
 from configCreation import ConfigCreation
 
+DEFAULT_CONFIG = {
+    "token": "",
+    "prefix": "<",
+    "owner_id": 0
+}
 
 # Attempt to get configuration file if unable create one
 for i in range(5):
@@ -14,7 +19,7 @@ for i in range(5):
 			prefix = data["prefix"]
 			owner_id = data["owner_id"]
 	except OSError as e:
-		ConfigCreation.createDefaultConfig()
+		ConfigCreation.createConfig("configuration", DEFAULT_CONFIG)
 
 
 class Greetings(commands.Cog):
