@@ -13,13 +13,13 @@ class CogName(commands.Cog):
         self.bot = bot
         self.check_member_status.start()
 
-    @commands.group(name="antilegset")
+    @commands.group(name = "antilegset", description="Anti League Settings group.", aliases = ["als"])
     async def antilegset(self, ctx):
         pass
 
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    @antilegset.command()
+    @antilegset.command(name = "time", description = "Change time of Anti League Settings.")
     async def time(self, ctx:commands.Context, time:float=None):
         if time == None:
             await ctx.send("No time given bro. Needs to be in minutes btw.")

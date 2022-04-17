@@ -1,7 +1,5 @@
-import discord
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions, CheckFailure, CommandNotFound, NotOwner
-import time
 
 
 class OnCommandErrorCog(commands.Cog, name="on command error"):
