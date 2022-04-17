@@ -1,10 +1,8 @@
-import discord
 import json
 import datetime
 import pytz
 from discord.ext import commands, tasks
-
-from babelv2.configCreation import ConfigCreation
+from configCreation import ConfigCreation
 
 DEFAULT_CONFIG = {
     "time": 15,
