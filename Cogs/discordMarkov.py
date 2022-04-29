@@ -18,8 +18,8 @@ class discordMarkov(commands.Cog):
         if message.content:
             appendMarkovText(cleanText)
 
-        if "babel" in message.content:
-            randNum = randint(0,50)
+        if "babel" in message.content.lower():
+            randNum = randint(50,100)
         else:
             randNum = randint(0,100)
         if 100 <= randNum >= 70:
