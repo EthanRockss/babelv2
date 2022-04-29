@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 Cogs/Configs/antiLeagueConfig.json
 configuration.json
+Cogs/Data/Markov.txt
