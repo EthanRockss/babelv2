@@ -19,7 +19,7 @@ class discordMarkov(commands.Cog):
             appendMarkovText(cleanText)
 
         randNum = randint(0,100)
-        if randNum:
+        if 100 <= randNum >= 90:
             genText = generateMarkovText()
             if genText:
                 await message.channel.send(genText)
