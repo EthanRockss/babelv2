@@ -26,7 +26,10 @@ class discordMarkov(commands.Cog):
         if 100 >= randNum >= 70:
             genText = generateMarkovText()
             if genText:
-                await message.channel.send(genText)
+                try:
+                    await message.channel.send(genText)
+                except discord.errors.Forbidden as e:
+                    return
 
 
 def appendMarkovText(text:str):
