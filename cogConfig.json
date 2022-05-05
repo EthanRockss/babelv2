@@ -1,0 +1,9 @@
+{
+    "Cogs": {
+        "antiLeague.py": true,
+        "cogManager.py": true,
+        "help.py": true,
+        "onCommandError.py": true,
+        "ping.py": true
+    }
+}
