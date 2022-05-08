@@ -153,4 +153,4 @@ cython_debug/
 Cogs/Configs/antiLeagueConfig.json
 configuration.json
 Cogs/Data/Markov.txt
-cogConfig.json
+Cogs/Configs/roleMod.json
