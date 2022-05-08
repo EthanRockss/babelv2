@@ -1,8 +1,5 @@
-from venv import create
-import discord
 import json
 from discord.ext import commands
-from Cogs.antiLeague import DEFAULT_CONFIG
 from configCreation import ConfigCreation
 
 DEFAULT_CONFIG = {"Guilds": {
