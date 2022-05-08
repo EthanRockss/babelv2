@@ -45,6 +45,8 @@ class CogName(commands.Cog):
                 pass
             except IndexError as e:
                 pass
+            except TypeError as e:
+                pass
 
     @check_member_status.before_loop
     async def before_check_member_status(self):
