@@ -11,11 +11,11 @@ class RoleMod(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot = bot
 
-    @commands.group(name="role", desc="role")
+    @commands.group(name="role", desc="the group for the role commands")
     async def role(self, ctx):
         return
 
-    @role.command(name = "color", desc="color")
+    @role.command(name = "color", desc="changes the color of the role")
     async def rolecolor(self, ctx:commands.Context, hexColor):
         if not hexColor:
             await ctx.send("You didn't send a hex color")
@@ -26,7 +26,7 @@ class RoleMod(commands.Cog):
             roleObj = ctx.guild.get_role(roleId)
             await roleObj.edit(color=hexColor)
         except KeyError:
-            roleObj = await ctx.guild.create_role(name=ctx.author.display_name, color=hexColor)
+            roleObj = await ctx.guild.create_role(name=ctx.author.display_name, color=hexColor, hoist=True)
             with open("Cogs/Configs/roleMod.json", "w") as config:
                 data = {"Guilds":{ctx.guild.id:{
                     str(ctx.author.id): roleObj.id
@@ -36,7 +36,7 @@ class RoleMod(commands.Cog):
         await ctx.author.add_roles(roleObj)
         await ctx.send("K your role color is changed.")
 
-    @role.command(name = "name", desc="name")
+    @role.command(name = "name", desc="changes the name of the role")
     async def rolename(self, ctx:commands.Context, *, nameStr:str):
         if not nameStr:
             await ctx.send("You didn't send anything I can use for a name")
@@ -46,7 +46,7 @@ class RoleMod(commands.Cog):
             roleObj = ctx.guild.get_role(roleId)
             await roleObj.edit(name=nameStr)
         except KeyError:
-            roleObj = await ctx.guild.create_role(name=nameStr)
+            roleObj = await ctx.guild.create_role(name=nameStr, hoist=True)
             with open("Cogs/Configs/roleMod.json", "w") as config:
                 data = {"Guilds":{ctx.guild.id:{
                     str(ctx.author.id): roleObj.id
@@ -55,6 +55,27 @@ class RoleMod(commands.Cog):
             config.close()
         await ctx.author.add_roles(roleObj)
         await ctx.send("K your role name is changed.")
+
+    @role.command(name = "hoist", desc="hoists the role to show it seperately or the opposite")
+    async def rolehoist(self, ctx:commands.Context):
+        try:
+            roleId = getMemberRole(ctx.author.id, ctx.guild.id)
+            roleObj = ctx.guild.get_role(roleId) 
+            if roleObj.hoist:
+                await roleObj.edit(hoist=False)
+                await ctx.send("K your role is no longer shown~ seperate now.")
+            else:
+                await roleObj.edit(hoist=True)
+                await ctx.send("K your role is shown seperate now.")
+        except KeyError:
+            roleObj = await ctx.guild.create_role(name=ctx.author.display_name, hoist=True)
+            with open("Cogs/Configs/roleMod.json", "w") as config:
+                data = {"Guilds":{ctx.guild.id:{
+                    str(ctx.author.id): roleObj.id
+                }}}
+                json.dump(data, config, ensure_ascii=False,indent=4)
+            config.close()
+        await ctx.author.add_roles(roleObj)
 
 
 def getMemberRole(id:int, guildId:int):

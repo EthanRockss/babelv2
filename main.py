@@ -44,16 +44,24 @@ bot = commands.Bot(prefix, intents = intents, owner_id = owner_id)
 
 # Load cogs
 for i in range(5):
+	with open("cogConfig.json", "r") as config: 
+		data = json.load(config)
+		cogs = data["Cogs"]
+		config.close()
+	for i in os.listdir("Cogs"):
+		if i not in data["Cogs"] and i.endswith(".py"):
+			print("Adding: {} to cog config.".format(i))
+			data["Cogs"][i] = True
+		with open("cogConfig.json", "w") as config:
+			json.dump(data, config, ensure_ascii=False, indent=4)
 	try:
-		with open("cogConfig.json", "r") as config: 
-			data = json.load(config)
-			cogs = data["Cogs"]
-			config.close()
 		failedCogs = []
 		for i in cogs:
 			try:
 				bot.load_extension(f"Cogs.{i[:-3]}")
+				print("loaded extension: {}".format(i))
 			except commands.errors.ExtensionNotFound:
+				print("extenstion not found: {}".format(i))
 				if i not in os.listdir("Cogs"):
 					failedCogs.append(i)
 		for i in failedCogs:
