@@ -1,5 +1,4 @@
 import json
-import discord
 from discord.ext import commands
 from configCreation import ConfigCreation
 
@@ -28,10 +27,12 @@ class RoleMod(commands.Cog):
             await roleObj.edit(color=hexColor)
         except KeyError:
             roleObj = await ctx.guild.create_role(name=ctx.author.display_name, color=hexColor, hoist=True)
+            try:
+                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
+            except KeyError:
+                data = addGuild(ctx.guild.id)
+                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
             with open("Cogs/Configs/roleMod.json", "w") as config:
-                data = {"Guilds":{ctx.guild.id:{
-                    str(ctx.author.id): roleObj.id
-                }}}
                 json.dump(data, config, ensure_ascii=False,indent=4)
             config.close()
         await ctx.author.add_roles(roleObj)
@@ -39,6 +40,7 @@ class RoleMod(commands.Cog):
 
     @role.command(name = "name", desc="changes the name of the role")
     async def rolename(self, ctx:commands.Context, *, nameStr:str):
+        data = configUpdate()
         if not nameStr:
             await ctx.send("You didn't send anything I can use for a name")
             return
@@ -48,10 +50,12 @@ class RoleMod(commands.Cog):
             await roleObj.edit(name=nameStr)
         except KeyError:
             roleObj = await ctx.guild.create_role(name=nameStr, hoist=True)
+            try:
+                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
+            except KeyError:
+                data = addGuild(ctx.guild.id)
+                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
             with open("Cogs/Configs/roleMod.json", "w") as config:
-                data = {"Guilds":{ctx.guild.id:{
-                    str(ctx.author.id): roleObj.id
-                }}}
                 json.dump(data, config, ensure_ascii=False,indent=4)
             config.close()
         await ctx.author.add_roles(roleObj)
@@ -70,10 +74,12 @@ class RoleMod(commands.Cog):
                 await ctx.send("K your role is shown seperate now.")
         except KeyError:
             roleObj = await ctx.guild.create_role(name=ctx.author.display_name, hoist=True)
+            try:
+                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
+            except KeyError:
+                data = addGuild(ctx.guild.id)
+                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
             with open("Cogs/Configs/roleMod.json", "w") as config:
-                data = {"Guilds":{ctx.guild.id:{
-                    str(ctx.author.id): roleObj.id
-                }}}
                 json.dump(data, config, ensure_ascii=False,indent=4)
             config.close()
         await ctx.author.add_roles(roleObj)
@@ -95,6 +101,20 @@ def getMemberRole(id:int, guildId:int):
         roleId = data["Guilds"][str(guildId)][str(id)]
     config.close()
     return roleId
+
+def configUpdate():
+    with open("Cogs/Configs/roleMod.json", "r") as config:
+        data = json.load(config)
+    config.close()
+    return data
+
+def addGuild(guildId:int):
+    data = configUpdate()
+    data["Guilds"][str(guildId)] = {}
+    with open("Cogs/Configs/roleMod.json", "w") as config:
+        json.dump(data, config, ensure_ascii=False,indent=4)
+    config.close()
+    return configUpdate()
 
 try:
     with open("Cogs/Configs/roleMod.json", "r") as config:
