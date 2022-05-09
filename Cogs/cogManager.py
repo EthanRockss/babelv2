@@ -19,7 +19,7 @@ class cogManager(commands.Cog):
             await ctx.send("Dude what cog do you want me to load.")
             return
         if not cog.endswith(".py"):
-            cog.append(".py")
+            cog = cog + ".py"
         if cog not in os.listdir("Cogs") or cog == script:
             await ctx.send("Dude what cog do you want me to load.")
             return
@@ -41,7 +41,7 @@ class cogManager(commands.Cog):
             await ctx.send("Dude what cog do you want me to unload.")
             return
         if not cog.endswith(".py"):
-            cog.append(".py")
+            cog = cog + ".py"
         if cog not in os.listdir("Cogs") or cog == script:
             await ctx.send("Dude what cog do you want me to unload.")
             return
