@@ -58,8 +58,11 @@ for i in range(5):
 		failedCogs = []
 		for i in cogs:
 			try:
-				bot.load_extension(f"Cogs.{i[:-3]}")
-				print("loaded extension: {}".format(i))
+				if cogs[i]:
+					bot.load_extension(f"Cogs.{i[:-3]}")
+					print("loaded extension: {}".format(i))
+				else:
+					print("Not loading extension: {}".format(i))
 			except commands.errors.ExtensionNotFound:
 				print("extenstion not found: {}".format(i))
 				if i not in os.listdir("Cogs"):
