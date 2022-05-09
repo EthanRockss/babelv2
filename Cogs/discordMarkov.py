@@ -23,7 +23,7 @@ class discordMarkov(commands.Cog):
         else:
             randNum = randint(0,100)
             
-        if 100 >= randNum >= 70:
+        if 100 >= randNum >= 85:
             genText = generateMarkovText()
             if genText:
                 try:
