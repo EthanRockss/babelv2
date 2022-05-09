@@ -63,7 +63,7 @@ class RoleMod(commands.Cog):
             roleObj = ctx.guild.get_role(roleId) 
             if roleObj.hoist:
                 await roleObj.edit(hoist=False)
-                await ctx.send("K your role is no longer shown~ seperate now.")
+                await ctx.send("K your role is no longer shown seperate now.")
             else:
                 await roleObj.edit(hoist=True)
                 await ctx.send("K your role is shown seperate now.")
