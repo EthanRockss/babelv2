@@ -14,9 +14,11 @@ class VcTroll(commands.Cog):
         if after.channel:
             channel = member.voice.channel
             if len(channel.members) >= 4:
-                await channel.connect(timeout=30,reconnect=False) 
-        elif state.is_connected():
-            await state.disconnect()
+                await channel.connect(timeout=30,reconnect=False)
+                await member.guild.change_voice_state(channel=channel, self_mute=True)
+        elif state:
+            if state.is_connected():
+                await state.disconnect()
 
 def setup(bot:commands.Bot):
     bot.add_cog(VcTroll(bot))
