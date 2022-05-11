@@ -17,6 +17,7 @@ class RoleMod(commands.Cog):
 
     @role.command(name = "color", desc="changes the color of the role")
     async def rolecolor(self, ctx:commands.Context, hexColor):
+        data = configUpdate()
         if not hexColor:
             await ctx.send("You didn't send a hex color")
             return
@@ -63,6 +64,7 @@ class RoleMod(commands.Cog):
 
     @role.command(name = "hoist", desc="hoists the role to show it seperately or the opposite")
     async def rolehoist(self, ctx:commands.Context):
+        data = configUpdate()
         try:
             roleId = getMemberRole(ctx.author.id, ctx.guild.id)
             roleObj = ctx.guild.get_role(roleId) 
