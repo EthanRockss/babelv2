@@ -16,11 +16,13 @@ class RoleMod(commands.Cog):
         return
 
     @role.command(name = "color", desc="changes the color of the role")
-    async def rolecolor(self, ctx:commands.Context, hexColor):
+    async def rolecolor(self, ctx:commands.Context, hexColor=None):
         data = configUpdate()
         if not hexColor:
-            await ctx.send("You didn't send a hex color")
+            await ctx.send("You didn't send a hex color\nhttps://www.w3docs.com/tools/color-picker")
             return
+        if hexColor.contains("#"):
+            hexColor.replace("#","")
         hexColor = int(hexColor, 16)
         try:
             roleId = getMemberRole(ctx.author.id, ctx.guild.id)
@@ -40,7 +42,7 @@ class RoleMod(commands.Cog):
         await ctx.send("K your role color is changed.")
 
     @role.command(name = "name", desc="changes the name of the role")
-    async def rolename(self, ctx:commands.Context, *, nameStr:str):
+    async def rolename(self, ctx:commands.Context, *, nameStr:str=None):
         data = configUpdate()
         if not nameStr:
             await ctx.send("You didn't send anything I can use for a name")
