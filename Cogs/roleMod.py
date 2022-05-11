@@ -21,7 +21,7 @@ class RoleMod(commands.Cog):
         if not hexColor:
             await ctx.send("You didn't send a hex color\nhttps://www.w3docs.com/tools/color-picker")
             return
-        if hexColor.contains("#"):
+        if "#" in hexColor:
             hexColor.replace("#","")
         hexColor = int(hexColor, 16)
         try:
