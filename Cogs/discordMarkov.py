@@ -14,6 +14,9 @@ class discordMarkov(commands.Cog):
         if message.author.bot:
             return
 
+        if self.bot.command_prefix in message.content:
+            return
+
         cleanText = message.clean_content.lower()
         if message.content:
             appendMarkovText(cleanText)
@@ -21,7 +24,7 @@ class discordMarkov(commands.Cog):
         if "babel" in message.content.lower():
             randNum = randint(50,100)
         else:
-            randNum = randint(0,100)
+            randNum = randint(0,90)
             
         if 100 >= randNum >= 85:
             genText = generateMarkovText()
