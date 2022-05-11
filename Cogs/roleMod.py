@@ -16,7 +16,7 @@ class RoleMod(commands.Cog):
         return
 
     @role.command(name = "color", desc="changes the color of the role")
-    async def rolecolor(self, ctx:commands.Context, hexColor=None):
+    async def rolecolor(self, ctx:commands.Context, hexColor:str=None):
         data = configUpdate()
         if not hexColor:
             await ctx.send("You didn't send a hex color\nhttps://www.w3docs.com/tools/color-picker")
