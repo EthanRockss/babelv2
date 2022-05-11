@@ -22,7 +22,7 @@ class RoleMod(commands.Cog):
             await ctx.send("You didn't send a hex color\nhttps://www.w3docs.com/tools/color-picker")
             return
         if "#" in hexColor:
-            hexColor.replace("#","")
+            hexColor = hexColor.replace("#","")
         hexColor = int(hexColor, 16)
         try:
             roleId = getMemberRole(ctx.author.id, ctx.guild.id)
