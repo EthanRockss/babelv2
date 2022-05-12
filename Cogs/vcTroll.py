@@ -16,13 +16,15 @@ class VcTroll(commands.Cog):
             if len(channel.members) >= 4:
                 try:
                     await channel.connect(timeout=30,reconnect=False)
-                    await member.guild.change_voice_state(channel=channel, self_mute=True)
+                    if not state.mute:
+                        await member.guild.change_voice_state(channel=channel, self_mute=True)
                 except discord.errors.ClientException:
                     pass
-
         elif state:
             if state.is_connected():
-                await state.disconnect()
+                channel = member.voice.channel
+                if len(channel.members) < 4:
+                    await state.disconnect()
 
 def setup(bot:commands.Bot):
     bot.add_cog(VcTroll(bot))
