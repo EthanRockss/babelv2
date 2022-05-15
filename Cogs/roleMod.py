@@ -1,4 +1,5 @@
 import json
+from types import NoneType
 import discord
 from discord.ext import commands
 from configCreation import ConfigCreation
@@ -29,7 +30,7 @@ class RoleMod(commands.Cog):
             roleId = getMemberRole(ctx.author.id, ctx.guild.id)
             roleObj = ctx.guild.get_role(roleId)
             await roleObj.edit(color=hexColor)
-        except KeyError:
+        except KeyError or NoneType:
             roleObj = await ctx.guild.create_role(name=ctx.author.display_name, color=hexColor, hoist=True)
             try:
                 data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
@@ -52,7 +53,7 @@ class RoleMod(commands.Cog):
             roleId = getMemberRole(ctx.author.id, ctx.guild.id)
             roleObj = ctx.guild.get_role(roleId)
             await roleObj.edit(name=nameStr)
-        except KeyError:
+        except KeyError or NoneType:
             roleObj = await ctx.guild.create_role(name=nameStr, hoist=True)
             try:
                 data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
@@ -77,7 +78,7 @@ class RoleMod(commands.Cog):
             else:
                 await roleObj.edit(hoist=True)
                 await ctx.send("K your role is shown seperate now.")
-        except KeyError:
+        except KeyError or NoneType:
             roleObj = await ctx.guild.create_role(name=ctx.author.display_name, hoist=True)
             try:
                 data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
