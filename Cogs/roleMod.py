@@ -1,4 +1,5 @@
 import json
+import discord
 from discord.ext import commands
 from configCreation import ConfigCreation
 
@@ -87,6 +88,42 @@ class RoleMod(commands.Cog):
                 json.dump(data, config, ensure_ascii=False,indent=4)
             config.close()
         await ctx.author.add_roles(roleObj)
+
+    @role.command(name = "link", dexc="links a role to a user")
+    async def rolelink(self, ctx:commands.Context, user:discord.Member=None, role:discord.Role=None):
+        data = configUpdate()
+        if not user or not role:
+            await ctx.send("I don't see the damn info I need cracka, ping both the member and the role god damn like holy shit dude do i need to spell it out for you\n{}role link (user) (role)".format(self.bot.command_prefix))
+            return
+        if role not in user.roles:
+            await user.add_roles(role)
+        try:
+            data["Guilds"][str(ctx.guild.id)][str(user.id)] = role.id
+        except KeyError:
+            data = addGuild(ctx.guild.id)
+            data["Guilds"][str(ctx.guild.id)][str(str(user.id))] = role.id
+        with open("Cogs/Configs/roleMod.json", "w") as config:
+            json.dump(data, config, ensure_ascii=False,indent=4)
+        await ctx.send("Okay linked them")
+
+    @role.command(name = "linkid", dexc="links a role to a user")
+    async def rolelinkid(self, ctx:commands.Context, userId:int=None, roleId:int=None):
+        data = configUpdate()
+        role = ctx.guild.get_role(roleId)
+        user =  ctx.guild.get_member(userId)
+        if not user or not role:
+            await ctx.send("I don't see the damn info I need cracka, ping both the member and the role god damn like holy shit dude do i need to spell it out for you\n{}role link (user) (role)".format(self.bot.command_prefix))
+            return
+        if role not in user.roles:
+            await user.add_roles(role)
+        try:
+            data["Guilds"][str(ctx.guild.id)][str(user.id)] = role.id
+        except KeyError:
+            data = addGuild(ctx.guild.id)
+            data["Guilds"][str(ctx.guild.id)][str(str(user.id))] = role.id
+        with open("Cogs/Configs/roleMod.json", "w") as config:
+            json.dump(data, config, ensure_ascii=False,indent=4)
+        await ctx.send("Okay linked them")
 
     @commands.is_owner()
     @role.command(name = "elevate", desc="elevation engage")
