@@ -89,6 +89,7 @@ class RoleMod(commands.Cog):
             config.close()
         await ctx.author.add_roles(roleObj)
 
+    @commands.has_guild_permissions(manage_roles=True)
     @role.command(name = "link", dexc="links a role to a user")
     async def rolelink(self, ctx:commands.Context, user:discord.Member=None, role:discord.Role=None):
         data = configUpdate()
@@ -106,6 +107,7 @@ class RoleMod(commands.Cog):
             json.dump(data, config, ensure_ascii=False,indent=4)
         await ctx.send("Okay linked them")
 
+    @commands.has_guild_permissions(manage_roles=True)
     @role.command(name = "linkid", dexc="links a role to a user")
     async def rolelinkid(self, ctx:commands.Context, userId:int=None, roleId:int=None):
         data = configUpdate()
