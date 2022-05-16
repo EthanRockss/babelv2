@@ -1,8 +1,11 @@
 import markovify
 import discord
+import os
 from random import randint
 from discord.ext import commands
 
+if not os.path.exists("Cogs/Data"):
+    os.mkdir("Cogs/Data")
 
 class discordMarkov(commands.Cog):
     def __init__(self, bot:commands.Bot):
@@ -36,7 +39,7 @@ class discordMarkov(commands.Cog):
 
 
 def appendMarkovText(text:str):
-    with open("Cogs/Data/Markov.txt", "a", encoding='utf-8') as markov:
+    with open("Cogs/Data/Markov.txt", "a+", encoding='utf-8') as markov:
         markov.write(text + "\n")
     markov.close()
 
