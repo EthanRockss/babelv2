@@ -1,8 +1,6 @@
-import discord
-import json
+import sqlite3
 import os
 from discord.ext import commands
-from configCreation import ConfigCreation
 
 DEFAULT_CONFIG = {}
 
@@ -25,12 +23,11 @@ class cogManager(commands.Cog):
             return
         try:
             self.bot.load_extension(f"Cogs.{cog[:-3]}")
-            with open("cogConfig.json", "r") as config:
-                data = json.load(config)
-                data["Cogs"][cog] = True
-                config.close()
-            with open("cogConfig.json", "w") as config:
-                json.dump(data, config, ensure_ascii=False, indent=4)
+            con = sqlite3.connect("Cogs/Cogs.db")
+            cur = con.cursor()
+            cur.execute(f'''UPDATE list SET status = True WHERE name = ?''', (cog,))
+            con.commit()
+            con.close()
         except commands.errors.ExtensionAlreadyLoaded:
             await ctx.send("that cog is already loaded bro.")
 
@@ -47,12 +44,11 @@ class cogManager(commands.Cog):
             return
         try:
             self.bot.unload_extension(f"Cogs.{cog[:-3]}")
-            with open("cogConfig.json", "r") as config:
-                data = json.load(config)
-                data["Cogs"][cog] = False
-                config.close()
-            with open("cogConfig.json", "w") as config:
-                json.dump(data, config, ensure_ascii=False, indent=4)
+            con = sqlite3.connect("Cogs/Cogs.db")
+            cur = con.cursor()
+            cur.execute(f'''UPDATE list SET status = False WHERE name = ?''', (cog,))
+            con.commit()
+            con.close()
         except commands.errors.ExtensionNotLoaded:
             await ctx.send("that cog is already unloaded bro.")
 
@@ -73,26 +69,20 @@ class cogManager(commands.Cog):
             messageTwo = "No disabled cogs."
         await ctx.send("```Enabled:\n{}```\n```Disabled:\n{}```".format(messageOne, messageTwo).replace(".py",""))
 
-for i in range(5):
-    try:
-        with open("cogConfig.json", "r") as config: 
-            data = json.load(config)
-        config.close()
-    except OSError as e:
-        ConfigCreation.createConfig("cogConfig", DEFAULT_CONFIG, False)
-
 def getAllCogs():
+    #connect to db and creator cursor
+    con = sqlite3.connect("Cogs/Cogs.db")
+    cur = con.cursor()
     enabledCogs = []
     disabledCogs = []
-    with open("cogConfig.json", "r") as config:
-        data = json.load(config)
-        for i in data["Cogs"]:
-            if i == script:
-                pass
-            elif data["Cogs"][i]:
-                enabledCogs.append(i)
-            elif not data["Cogs"][i]:
-                disabledCogs.append(i)
+    for row in cur.execute('''SELECT * FROM list ORDER BY name'''):
+        if row[0] == script:
+            pass
+        elif row[1]:
+            enabledCogs.append(row[0])
+        elif row[1] == False:
+            disabledCogs.append(row[0])
+    con.close()
     return enabledCogs, disabledCogs
 
 def setup(bot:commands.Bot):

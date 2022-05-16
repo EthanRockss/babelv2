@@ -1,13 +1,8 @@
 import json
+import sqlite3
 from types import NoneType
 import discord
 from discord.ext import commands
-from configCreation import ConfigCreation
-
-DEFAULT_CONFIG = {"Guilds": {
-
-    }
-}
 
 class RoleMod(commands.Cog):
     def __init__(self, bot:commands.Bot):
@@ -19,7 +14,6 @@ class RoleMod(commands.Cog):
 
     @role.command(name = "color", desc="changes the color of the role")
     async def rolecolor(self, ctx:commands.Context, hexColor:str=None):
-        data = configUpdate()
         if not hexColor:
             await ctx.send("You didn't send a hex color\nhttps://www.w3docs.com/tools/color-picker")
             return
@@ -32,20 +26,12 @@ class RoleMod(commands.Cog):
             await roleObj.edit(color=hexColor)
         except:
             roleObj = await ctx.guild.create_role(name=ctx.author.display_name, color=hexColor, hoist=True)
-            try:
-                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
-            except KeyError:
-                data = addGuild(ctx.guild.id)
-                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
-            with open("Cogs/Configs/roleMod.json", "w") as config:
-                json.dump(data, config, ensure_ascii=False,indent=4)
-            config.close()
+            updateMember(ctx.guild.id, ctx.author.id, roleObj.id)
         await ctx.author.add_roles(roleObj)
         await ctx.send("K your role color is changed.")
 
     @role.command(name = "name", desc="changes the name of the role")
     async def rolename(self, ctx:commands.Context, *, nameStr:str=None):
-        data = configUpdate()
         if not nameStr:
             await ctx.send("You didn't send anything I can use for a name")
             return
@@ -55,20 +41,12 @@ class RoleMod(commands.Cog):
             await roleObj.edit(name=nameStr)
         except:
             roleObj = await ctx.guild.create_role(name=nameStr, hoist=True)
-            try:
-                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
-            except KeyError:
-                data = addGuild(ctx.guild.id)
-                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
-            with open("Cogs/Configs/roleMod.json", "w") as config:
-                json.dump(data, config, ensure_ascii=False,indent=4)
-            config.close()
+            updateMember(ctx.guild.id, ctx.author.id, roleObj.id)
         await ctx.author.add_roles(roleObj)
         await ctx.send("K your role name is changed.")
 
     @role.command(name = "hoist", desc="hoists the role to show it seperately or the opposite")
     async def rolehoist(self, ctx:commands.Context):
-        data = configUpdate()
         try:
             roleId = getMemberRole(ctx.author.id, ctx.guild.id)
             roleObj = ctx.guild.get_role(roleId) 
@@ -80,52 +58,31 @@ class RoleMod(commands.Cog):
                 await ctx.send("K your role is shown seperate now.")
         except:
             roleObj = await ctx.guild.create_role(name=ctx.author.display_name, hoist=True)
-            try:
-                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
-            except KeyError:
-                data = addGuild(ctx.guild.id)
-                data["Guilds"][str(ctx.guild.id)][str(ctx.author.id)] = roleObj.id
-            with open("Cogs/Configs/roleMod.json", "w") as config:
-                json.dump(data, config, ensure_ascii=False,indent=4)
-            config.close()
+            updateMember(ctx.guild.id, ctx.author.id, roleObj.id)
         await ctx.author.add_roles(roleObj)
 
     @commands.has_guild_permissions(manage_roles=True)
     @role.command(name = "link", dexc="links a role to a user")
     async def rolelink(self, ctx:commands.Context, user:discord.Member=None, role:discord.Role=None):
-        data = configUpdate()
         if not user or not role:
             await ctx.send("I don't see the damn info I need cracka, ping both the member and the role god damn like holy shit dude do i need to spell it out for you\n{}role link (user) (role)".format(self.bot.command_prefix))
             return
         if role not in user.roles:
             await user.add_roles(role)
-        try:
-            data["Guilds"][str(ctx.guild.id)][str(user.id)] = role.id
-        except KeyError:
-            data = addGuild(ctx.guild.id)
-            data["Guilds"][str(ctx.guild.id)][str(str(user.id))] = role.id
-        with open("Cogs/Configs/roleMod.json", "w") as config:
-            json.dump(data, config, ensure_ascii=False,indent=4)
+        updateMember(ctx.guild.id, user.id, role.id)
         await ctx.send("Okay linked them")
 
     @commands.has_guild_permissions(manage_roles=True)
     @role.command(name = "linkid", dexc="links a role to a user")
     async def rolelinkid(self, ctx:commands.Context, userId:int=None, roleId:int=None):
-        data = configUpdate()
         role = ctx.guild.get_role(roleId)
         user =  ctx.guild.get_member(userId)
         if not user or not role:
-            await ctx.send("I don't see the damn info I need cracka, ping both the member and the role god damn like holy shit dude do i need to spell it out for you\n{}role link (user) (role)".format(self.bot.command_prefix))
+            await ctx.send("I don't see the damn info I need cracka, ping both the member and the role god damn like holy shit dude do i need to spell it out for you\n{}role link (userId) (roleId)".format(self.bot.command_prefix))
             return
         if role not in user.roles:
             await user.add_roles(role)
-        try:
-            data["Guilds"][str(ctx.guild.id)][str(user.id)] = role.id
-        except KeyError:
-            data = addGuild(ctx.guild.id)
-            data["Guilds"][str(ctx.guild.id)][str(str(user.id))] = role.id
-        with open("Cogs/Configs/roleMod.json", "w") as config:
-            json.dump(data, config, ensure_ascii=False,indent=4)
+        updateMember(ctx.guild.id, userId, roleId)
         await ctx.send("Okay linked them")
 
     @commands.is_owner()
@@ -139,33 +96,23 @@ class RoleMod(commands.Cog):
         await roleObj.edit(permissions=permissions)
 
 
-def getMemberRole(id:int, guildId:int):
-    with open("Cogs/Configs/roleMod.json", "r") as config:
-        data = json.load(config)
-        roleId = data["Guilds"][str(guildId)][str(id)]
-    config.close()
+def getMemberRole(memberId:int, guildId:int):
+    con = sqlite3.connect("Cogs/Cogs.db")
+    cur = con.cursor()
+    cur.execute('''SELECT roleId FROM rolemod WHERE memberId = ? AND guildId = ?''', (memberId, guildId))
+    roleId = cur.fetchone()
     return roleId
 
-def configUpdate():
-    with open("Cogs/Configs/roleMod.json", "r") as config:
-        data = json.load(config)
-    config.close()
-    return data
-
-def addGuild(guildId:int):
-    data = configUpdate()
-    data["Guilds"][str(guildId)] = {}
-    with open("Cogs/Configs/roleMod.json", "w") as config:
-        json.dump(data, config, ensure_ascii=False,indent=4)
-    config.close()
-    return configUpdate()
-
-try:
-    with open("Cogs/Configs/roleMod.json", "r") as config:
-        data = json.load(config)
-    config.close()
-except OSError as e:
-    ConfigCreation.createConfig("roleMod", DEFAULT_CONFIG, True)
+def updateMember(guildId:int=None, memberId:int=None, roleId:int=None):
+    con = sqlite3.connect("Cogs/Cogs.db")
+    cur = con.cursor()
+    cur.execute('''CREATE TABLE IF NOT EXISTS rolemod (guildId, memberId, roleId)''')
+    if cur.execute('''SELECT memberId FROM rolemod WHERE guildId = ?''', (guildId)):
+        cur.execute('''UPDATE rolemod SET roleId = ? WHERE memberId = ? AND guildId = ?''', (roleId, memberId, guildId))
+    else:
+        cur.execute('''INSERT INTO rolemod VALUES (?, ?, ?)''', (guildId, memberId, roleId))
+    con.commit()
+    con.close()
 
 def setup(bot:commands.Bot):
     bot.add_cog(RoleMod(bot))
