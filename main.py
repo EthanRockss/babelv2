@@ -51,7 +51,7 @@ for c in os.listdir("Cogs/"):
 		cur.execute('''INSERT INTO list values (?, ?)''', (c, True))
 con.commit()
 #load enabled cogs
-cur.execute('''SELECT * FROM list WHERE status = True''')
+cur.execute('''SELECT * FROM list WHERE status = 1''')
 enabledCogs = cur.fetchall()
 for c in enabledCogs:
 	print("loading: " + c[0])

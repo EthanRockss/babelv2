@@ -25,7 +25,7 @@ class cogManager(commands.Cog):
             self.bot.load_extension(f"Cogs.{cog[:-3]}")
             con = sqlite3.connect("Cogs/Cogs.db")
             cur = con.cursor()
-            cur.execute(f'''UPDATE list SET status = True WHERE name = ?''', (cog,))
+            cur.execute(f'''UPDATE list SET status = 1 WHERE name = ?''', (cog,))
             con.commit()
             con.close()
         except commands.errors.ExtensionAlreadyLoaded:
@@ -46,7 +46,7 @@ class cogManager(commands.Cog):
             self.bot.unload_extension(f"Cogs.{cog[:-3]}")
             con = sqlite3.connect("Cogs/Cogs.db")
             cur = con.cursor()
-            cur.execute(f'''UPDATE list SET status = False WHERE name = ?''', (cog,))
+            cur.execute(f'''UPDATE list SET status = 0 WHERE name = ?''', (cog,))
             con.commit()
             con.close()
         except commands.errors.ExtensionNotLoaded:
