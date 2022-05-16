@@ -1,4 +1,3 @@
-import json
 import sqlite3
 from types import NoneType
 import discord
@@ -101,16 +100,19 @@ def getMemberRole(memberId:int, guildId:int):
     cur = con.cursor()
     cur.execute('''SELECT roleId FROM rolemod WHERE memberId = ? AND guildId = ?''', (memberId, guildId))
     roleId = cur.fetchone()
-    return roleId
+    return roleId[0]
 
-def updateMember(guildId:int=None, memberId:int=None, roleId:int=None):
+def updateMember(guildId:int, memberId:int, roleId:int):
     con = sqlite3.connect("Cogs/Cogs.db")
     cur = con.cursor()
     cur.execute('''CREATE TABLE IF NOT EXISTS rolemod (guildId, memberId, roleId)''')
-    if cur.execute('''SELECT memberId FROM rolemod WHERE guildId = ?''', (guildId)):
+
+    cur.execute('''SELECT * FROM rolemod WHERE memberId = ? AND guildId = ?''', (memberId, guildId))
+    if type(cur.fetchone()) != NoneType:
         cur.execute('''UPDATE rolemod SET roleId = ? WHERE memberId = ? AND guildId = ?''', (roleId, memberId, guildId))
     else:
         cur.execute('''INSERT INTO rolemod VALUES (?, ?, ?)''', (guildId, memberId, roleId))
+    
     con.commit()
     con.close()
 
