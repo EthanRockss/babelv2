@@ -1,8 +1,8 @@
 import json
 import datetime
+import sqlite3
 import pytz
 from discord.ext import commands, tasks
-from configCreation import ConfigCreation
 
 DEFAULT_CONFIG = {
     "time": 15,
@@ -21,16 +21,13 @@ class CogName(commands.Cog):
     @commands.is_owner()
     @antilegset.command(name = "time", description = "Change time of Anti League Settings.")
     async def time(self, ctx:commands.Context, time:float=None):
-        if time == None:
+        if not time:
             await ctx.send("No time given bro. Needs to be in minutes btw.")
-        else:
-            EDIT_CONFIG = {
-                "time": time,
-            }
-            with open("Cogs/Configs/antiLeagueConfig.json", "w") as config:
-                json.dump(EDIT_CONFIG, config, ensure_ascii=False,indent=4)
-            config.close()
-            await ctx.send("Alright changing the time to {time}")
+            return
+        con = sqlite3.connect("Cogs/Cogs.db")
+        cur = con.cursor()
+        cur.execute(f"UPDATE antileague SET value = {time} WHERE name = timeset")
+        await ctx.send(f"Alright changing the time to {time}")
             
     @tasks.loop(seconds=30)
     async def check_member_status(self): 
@@ -41,24 +38,24 @@ class CogName(commands.Cog):
                     if m.activities[1].name.lower() == "league of legends":
                         await m.send("Gross.")
                         await m.ban(delete_message_days=0, reason="Plays league of legends")
-            except AttributeError as e:
-                pass
-            except IndexError as e:
-                pass
-            except TypeError as e:
+            except:
                 pass
 
     @check_member_status.before_loop
     async def before_check_member_status(self):
         await self.bot.wait_until_ready()
 
+con = sqlite3.connect("Cogs/Cogs.db")
+cur = con.cursor()
+
+cur.execute('''CREATE TABLE IF NOT EXISTS antileague (setting, value)''')
 try:
-    with open("Cogs/Configs/antiLeagueConfig.json", "r") as config: 
-        data = json.load(config)
-        timeSet = data["time"]
-    config.close()
-except OSError as e:
-    ConfigCreation.createConfig("antiLeagueConfig", DEFAULT_CONFIG, True)
+    cur.execute('''SELECT value FROM antileague WHERE setting = timeset''')
+    timeSet = cur.fetchone()[1]
+except:
+    cur.execute('''INSERT INTO antileague VALUES (?, ?)''', ("timeset", 30))
+    timeSet = 30
+con.close()
 
 def setup(bot:commands.Bot):
     bot.add_cog(CogName(bot))
