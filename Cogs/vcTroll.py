@@ -40,7 +40,7 @@ class VcTroll(commands.Cog):
             channel = after.channel
         elif before.channel:
             channel = before.channel
-        if len(channel.members) >= 4:
+        if len(channel.members) >= 8:
             try:
                 await channel.connect(timeout=30,reconnect=False)
                 state = discord.utils.get(self.bot.voice_clients, guild=member.guild)
@@ -51,7 +51,7 @@ class VcTroll(commands.Cog):
                 pass
         if state:
             if state.is_connected():
-                if len(channel.members) - 1 < 4:
+                if len(channel.members) - 1 < 8:
                     await state.disconnect()
 
 def setup(bot:commands.Bot):
