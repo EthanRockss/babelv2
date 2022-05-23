@@ -25,7 +25,7 @@ class RainbowRole(commands.Cog):
         con.commit()
         con.close()
 
-    @commands.command(name="setrainbow", desc="set a role to have a rainbow color")
+    @commands.command(name="setrainbowid", desc="set a role to have a rainbow color")
     async def setrainbowid(self, ctx, roleid:int=None):
         guildid = ctx.guild.id
         role = ctx.guild.get_role(roleid)
