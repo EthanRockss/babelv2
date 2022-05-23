@@ -25,6 +25,23 @@ class RainbowRole(commands.Cog):
         con.commit()
         con.close()
 
+    @commands.command(name="setrainbow", desc="set a role to have a rainbow color")
+    async def setrainbowid(self, ctx, roleid:int=None):
+        guildid = ctx.guild.id
+        role = ctx.guild.get_role(roleid)
+        con = sqlite3.connect("Cogs/Cogs.db")
+        cur = con.cursor()
+        cur.execute('''SELECT * FROM rainbowrole WHERE guildid = ? AND roleid = ?''', (guildid, roleid))
+        if type(cur.fetchone()) != NoneType:
+            cur.execute('''UPDATE rainbowrole SET roleid = ? WHERE guildid = ?''', (roleid, guildid))
+            await ctx.send(f"Updated role to {role.mention}")
+        else:
+            cur.execute('''INSERT INTO rainbowrole VALUES (?,?)''', (guildid, roleid))
+            await ctx.send(f"Set role to {role.mention}")
+        
+        con.commit()
+        con.close()
+
 
     @tasks.loop(seconds=10)
     async def change_role_color(self):
