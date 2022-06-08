@@ -58,7 +58,11 @@ cur.execute('''SELECT * FROM list WHERE status = 1''')
 enabledCogs = cur.fetchall()
 for c in enabledCogs:
 	print("loading: " + c[0])
-	bot.load_extension("Cogs.{}".format(c[0][:-3]))
+	try:
+		bot.load_extension("Cogs.{}".format(c[0][:-3]))
+	except commands.errors.ExtensionNotFound:
+		print(f"{c[0]} not found removing from db")
+		cur.execute('''DELETE FROM list WHERE name=?''', (c[0],))
 con.close()
 
 @bot.event
