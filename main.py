@@ -5,6 +5,8 @@ import os
 from discord.ext import commands
 from Tools.settingManager import createSetTable
 
+createSetTable()
+
 DEFAULT_CONFIG = {
     "token": "",
     "prefix": "<",
@@ -58,8 +60,6 @@ for c in enabledCogs:
 	print("loading: " + c[0])
 	bot.load_extension("Cogs.{}".format(c[0][:-3]))
 con.close()
-
-createSetTable()
 
 @bot.event
 async def on_ready():

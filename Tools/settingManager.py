@@ -3,7 +3,7 @@ import sqlite3
 def createSetTable(dbPath:str="Cogs/Cogs.db"):
     con = sqlite3.connect(dbPath)
     cur = con.cursor()
-    cur.execute('''CREATE TABLE IF NOT EXISTS setting (name, value, UNIQUE(name, value))''')
+    cur.execute('''CREATE TABLE IF NOT EXISTS setting (cog, name, value)''')
     con.commit()
     con.close()  
 
