@@ -63,6 +63,7 @@ for c in enabledCogs:
 	except commands.errors.ExtensionNotFound:
 		print(f"{c[0]} not found removing from db")
 		cur.execute('''DELETE FROM list WHERE name=?''', (c[0],))
+		con.commit()
 con.close()
 
 @bot.event
