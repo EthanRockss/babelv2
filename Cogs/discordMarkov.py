@@ -33,7 +33,7 @@ class discordMarkov(commands.Cog):
             genText = generateMarkovText()
             if genText:
                 try:
-                    await message.channel.send(genText)
+                    await message.channel.send(str(randNum) + genText)
                 except discord.errors.Forbidden as e:
                     return
 

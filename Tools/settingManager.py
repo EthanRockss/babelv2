@@ -24,6 +24,7 @@ def updateSetting(cogName:str, setName:str, setValue:any, dbPath:str="Cogs/Cogs.
 def fetchSetting(cogName:str, setName:str, dbPath:str="Cogs/Cogs.db"):
     con = sqlite3.connect(dbPath)
     cur = con.cursor()
-    value = cur.execute('''SELECT value FROM setting WHERE name=? AND cog=?''',(setName, cogName))
+    cur.execute('''SELECT value FROM setting WHERE name=? AND cog=?''',(setName, cogName))
+    value = cur.fetchone()[0]
     con.close()
     return value
