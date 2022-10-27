@@ -70,6 +70,5 @@ con.close()
 async def on_ready():
 	print(f"We have logged in as {bot.user}")
 	print(discord.__version__)
-	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name =f"{bot.command_prefix}help"))
 
 bot.run(token)
