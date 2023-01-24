@@ -21,7 +21,22 @@ DEFAULT_CONFIG = {
     "owner_id": 0
 }
 
-# check to see if configuration.json file exists and if it doesn't create one
+GAME_IP = "34.106.100.58:7777"
+
+def checkifbased(interaction: discord.Interaction) -> bool:
+	if interaction.user.id in ["216704930831007744", "874087089828937728"]:
+		return True
+
+def serverstatus() -> int:
+	request = service.instances().get(project=project, zone=zone, instance=instance)
+	response = request.execute()
+	if response["status"] == "TERMINATED":
+		return 1
+	elif response["status"] == "RUNNING":
+		return 2
+	elif response["status"] == "STOPPING":
+		return 3
+
 if not os.path.exists("configuration.json"):
 	with open("configuration.json", "w+") as config:
 		data = json.load(config)
@@ -44,14 +59,6 @@ class BabelClient(discord.Client):
 		self.tree.copy_global_to(guild=TESTING_GUILD)
 		await self.tree.sync(guild=TESTING_GUILD)
 
-@app_commands.guild_only()
-class instance(app_commands.Group(name="instance", description="commands to control the game server instance")):
-	pass
-
-@instance.command(name="status", description="a command to check the current status of the game server instance")
-async def status(interaction: discord.Interaction):
-	interaction.response.send_message("")
-
 intents = discord.Intents.all()
 client = BabelClient(intents=intents)
 
@@ -59,5 +66,33 @@ client = BabelClient(intents=intents)
 async def on_ready():
 	print(f"We have logged in as {client.user}")
 	print(discord.__version__)
+
+@client.tree.command(name="status", description="check the status of the game server")
+async def status(interaction: discord.Interaction):
+	status = serverstatus()
+	if status == 1:
+		await interaction.response.send_message("The instance is not currently running.")
+	elif status == 2:
+		await interaction.response.send_message(f"The server is running.\nConnect with: 'open {GAME_IP}'.\nPassword is nfa123")
+	elif status == 3:
+		await interaction.response.send_message("Server is currently shutting down.")
+
+@client.tree.command(name="start", description="start the game instance")
+async def start(interaction: discord.Interaction):
+	request = service.instances().start(project=project, zone=zone, instance=instance)
+	response = request.execute()
+	if response["status"] == "RUNNING":
+		await interaction.response.send_message(f"The server is booting.\nConnect in a few minutes with: 'open {GAME_IP}'.\nPassword is nfa123")
+	elif response["status"] == "STOPPING":
+		await interaction.response.send_message("Server is currently shutting down.")
+	else:
+		await interaction.response.send_message("something went wrong")
+
+@app_commands.check(checkifbased)
+@client.tree.command(name="stop", description="stop the game server instance")
+async def stop(interaction: discord.Interaction):
+	request = service.instances().stop(project=project, zone=zone, instance=instance)
+	response = request.execute()
+	await interaction.response.send_message("Server shutting down.")
 
 client.run(token)
