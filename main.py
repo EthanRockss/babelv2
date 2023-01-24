@@ -36,7 +36,7 @@ with open("configuration.json", "r") as config:
 service = discovery.build("compute", "v1")
 
 def checkifbased(interaction: discord.Interaction) -> bool:
-	if interaction.user.id in ["216704930831007744", "874087089828937728"]:
+	if interaction.user.id in [216704930831007744, 874087089828937728]:
 		return True
 
 def serverstatus() -> int:
