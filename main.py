@@ -1,15 +1,23 @@
-import sqlite3
 import discord
 import json
 import os
-from discord.ext import commands
+from discord import app_commands
 from Tools.settingManager import createSetTable
+from googleapiclient import discovery
+
+#Fill these out before using
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
+service = discovery.build('compute', 'v1')
+project = ""
+zone = ""
+instance = ""
 
 createSetTable()
 
+TESTING_GUILD = discord.Object(id=596781722448822282)
+
 DEFAULT_CONFIG = {
     "token": "",
-    "prefix": "<",
     "owner_id": 0
 }
 
@@ -22,53 +30,34 @@ with open("configuration.json", "r") as config:
 	data = json.load(config)
 	try:
 		token = data["token"]
-		prefix = data["prefix"]
 		owner_id = data["owner_id"]
 	except:
-		print("There is a problem with your configuration file\nMake sure to include a token, prefix, and your discord id.")
+		print("There is a problem with your configuration file\nMake sure to include a token and your discord id.")
 		exit()
 
-class BotCore(commands.Cog):
-	def __init__(self, bot):
-		self.bot = bot
-		self._last_member = None
-			
-# Intents
+class BabelClient(discord.Client):
+	def __init__(self, *, intents: discord.Intents):
+		super().__init__(intents=intents)
+		self.tree = app_commands.CommandTree(self)
+
+	async def setup_hook(self):
+		self.tree.copy_global_to(guild=TESTING_GUILD)
+		await self.tree.sync(guild=TESTING_GUILD)
+
+@app_commands.guild_only()
+class instance(app_commands.Group(name="instance", description="commands to control the game server instance")):
+	pass
+
+@instance.command(name="status", description="a command to check the current status of the game server instance")
+async def status(interaction: discord.Interaction):
+	interaction.response.send_message("")
+
 intents = discord.Intents.all()
-# The bot
-bot = commands.Bot(prefix, intents = intents, owner_id = owner_id)
+client = BabelClient(intents=intents)
 
-#connect to db and create cursor
-con = sqlite3.connect("Cogs/Cogs.db")
-cur = con.cursor()
-#create list table if it doesn't exist
-cur.execute('''CREATE TABLE IF NOT EXISTS list (name, status)''')
-#get list of cogs already in database
-cogs = []
-for row in cur.execute('''SELECT * FROM list ORDER BY name'''):
-	cogs.append(row[0])
-#add missing cogs to database
-for c in os.listdir("Cogs/"):
-	if c not in cogs and c.endswith(".py"):
-		print(f"adding {c} to database")
-		cur.execute('''INSERT INTO list values (?, ?)''', (c, True))
-con.commit()
-#load enabled cogs
-cur.execute('''SELECT * FROM list WHERE status = 1''')
-enabledCogs = cur.fetchall()
-for c in enabledCogs:
-	print("loading: " + c[0])
-	try:
-		bot.load_extension("Cogs.{}".format(c[0][:-3]))
-	except commands.errors.ExtensionNotFound:
-		print(f"{c[0]} not found removing from db")
-		cur.execute('''DELETE FROM list WHERE name=?''', (c[0],))
-		con.commit()
-con.close()
-
-@bot.event
+@client.event
 async def on_ready():
-	print(f"We have logged in as {bot.user}")
+	print(f"We have logged in as {client.user}")
 	print(discord.__version__)
 
-bot.run(token)
+client.run(token)
