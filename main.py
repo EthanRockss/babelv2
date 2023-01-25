@@ -14,14 +14,15 @@ DEFAULT_CONFIG = {
 	"zone": "",
 	"instance_name": "",
 	"server_ip": "",
+	"server_port": "",
 	"gac_path": "",
+	"primary_guild": 0,
 	"rcon": {
 		"password": "",
 		"port": ""
 	}
 }
 
-GAME_IP = "34.106.100.58:7777"
 
 if not os.path.exists("configuration.json"):
 	with open("configuration.json", "w+") as config:
@@ -36,8 +37,9 @@ with open("configuration.json", "r") as config:
 		zone = data["zone"]
 		server_ip = data["server_ip"]
 		instance = data["instance_name"]
-		rconconf = data["rcon"]
 		os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = data["gac_path"]
+		PRIMARY_GUILD = data["primary_guild"]
+		rconconf = data["rcon"]
 	except:
 		print("There is a problem with your configuration file\nMake sure to include a token and your discord id.")
 		exit()
@@ -45,7 +47,7 @@ with open("configuration.json", "r") as config:
 service = discovery.build("compute", "v1")
 
 def checkifbased(interaction: discord.Interaction) -> bool:
-	if interaction.user.id in [216704930831007744, 874087089828937728]:
+	if interaction.user.id == owner_id:
 		return True
 
 def serverstatus() -> int:
