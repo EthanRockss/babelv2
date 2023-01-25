@@ -119,8 +119,7 @@ async def players(interaction: discord.Interaction):
 		players = 0
 	else:
 		players = response.count("\n")
-
-	await interaction.response.send_message(f"There are currently {players} players online.")
+		await interaction.response.send_message(f"There are currently {players} players online.")
 
 
 client.run(token)
