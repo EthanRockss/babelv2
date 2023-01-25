@@ -14,6 +14,7 @@ DEFAULT_CONFIG = {
 	"zone": "",
 	"instance_name": "",
 	"server_ip": "",
+	"gac_path": "",
 	"rcon": {
 		"password": "",
 		"port": ""
@@ -36,7 +37,7 @@ with open("configuration.json", "r") as config:
 		server_ip = data["server_ip"]
 		instance = data["instance_name"]
 		rconconf = data["rcon"]
-		os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = data["GACPath"]
+		os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = data["gac_path"]
 	except:
 		print("There is a problem with your configuration file\nMake sure to include a token and your discord id.")
 		exit()
