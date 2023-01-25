@@ -112,7 +112,10 @@ async def players(interaction: discord.Interaction):
 		response = client.run('playerlist')
 	players = int
 
-	if response.startswith("There are currently no players present"):
+	statuscheck = serverstatus()
+	if statuscheck == 1 or statuscheck == 3:
+		await interaction.response.send_message("The server is currently offline.")
+	elif response.startswith("There are currently no players present"):
 		players = 0
 	else:
 		players = response.count("\n")
