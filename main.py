@@ -118,12 +118,12 @@ async def players(interaction: discord.Interaction):
 		response = connection.run('playerlist')
 
 	players = int
+	playerlist = ""
 
 	if response.startswith("There are currently no players present"):
 		players = 0
 	else:
 		players = response.count("\n")
-		playerlist = ""
 		for i in response.split("\n"):
 			p = i.split(", ")
 			if len(p) > 1:
