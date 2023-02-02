@@ -156,3 +156,4 @@ Cogs/Data/Markov.txt
 Cogs/Configs/roleMod.json
 cogConfig.json
 Cogs/Cogs.db
+prev_check.pk
