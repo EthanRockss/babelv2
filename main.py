@@ -84,13 +84,13 @@ async def status(interaction: discord.Interaction):
 	await interaction.response.defer()
 	status = serverstatus()
 	if status == 1:
-		await interaction.response.send_message("The instance is not currently running.")
+		await interaction.followup.send("The instance is not currently running.")
 	elif status == 2:
-		await interaction.response.send_message(f"The server is running.\nConnect via the Mordhau server browser search for `flom training grounds`.\nPassword is `{server_pass}`")
+		await interaction.followup.send(f"The server is running.\nConnect via the Mordhau server browser search for `flom training grounds`.\nPassword is `{server_pass}`")
 	elif status == 3:
-		await interaction.response.send_message("Server is currently shutting down.")
+		await interaction.followup.send("Server is currently shutting down.")
 	else:
-		await interaction.response.send_message("something went wrong")
+		await interaction.followup.send("something went wrong")
 
 @client.tree.command(name="start", description="start the game instance")
 async def start(interaction: discord.Interaction):
@@ -98,32 +98,32 @@ async def start(interaction: discord.Interaction):
 	request = service.instances().start(project=project, zone=zone, instance=instance)
 	response = request.execute()
 	if response["status"] == "RUNNING":
-		await interaction.response.send_message(f"The server is booting.\nConnect in a few minutes via the Mordhau server browser search for `flom training grounds`.\nPassword is `{server_pass}`")
+		await interaction.followup.send(f"The server is booting.\nConnect in a few minutes via the Mordhau server browser search for `flom training grounds`.\nPassword is `{server_pass}`")
 	elif response["status"] == "STOPPING":
-		await interaction.response.send_message("Server is currently shutting down.")
+		await interaction.followup.send("Server is currently shutting down.")
 	else:
-		await interaction.response.send_message("something went wrong")
+		await interaction.followup.send("something went wrong")
 
 @app_commands.check(checkifbased)
 @client.tree.command(name="stop", description="stop the game server instance")
 async def stop(interaction: discord.Interaction):
 	await interaction.response.defer()
 	service.instances().stop(project=project, zone=zone, instance=instance).execute()
-	await interaction.response.send_message("Server shutting down.")
+	await interaction.followup.send("Server shutting down.")
 
 @client.tree.command(name="players", description="get list of players on the server")
 async def players(interaction: discord.Interaction):
 	await interaction.response.defer()
 	statuscheck = serverstatus()
 	if statuscheck == 1 or statuscheck == 3:
-		await interaction.response.send_message("The server is currently offline.")
+		await interaction.followup.send("The server is currently offline.")
 		return
 	server_ip = updateserverip()
 	try:
 		with rcon(server_ip, rconconf["port"], passwd=rconconf["password"]) as connection:
 			response = connection.run('playerlist')
 	except:
-		await interaction.response.send_message("something went wrong.")
+		await interaction.followup.send("something went wrong.")
 		return
 
 	players = int
@@ -139,8 +139,8 @@ async def players(interaction: discord.Interaction):
 				playerlist = playerlist + f"{p[1]}\n"
 		
 	if len(playerlist) > 1:
-		await interaction.response.send_message(f"There are {players} players online\nCurrent players:\n```{playerlist}```")
+		await interaction.followup.send(f"There are {players} players online\nCurrent players:\n```{playerlist}```")
 	else:
-		await interaction.response.send_message(f"There are no players online.")
+		await interaction.followup.send(f"There are no players online.")
 
 client.run(token)
