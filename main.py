@@ -81,6 +81,7 @@ async def on_ready():
 
 @client.tree.command(name="status", description="check the status of the game server")
 async def status(interaction: discord.Interaction):
+	await interaction.response.defer()
 	status = serverstatus()
 	if status == 1:
 		await interaction.response.send_message("The instance is not currently running.")
@@ -93,6 +94,7 @@ async def status(interaction: discord.Interaction):
 
 @client.tree.command(name="start", description="start the game instance")
 async def start(interaction: discord.Interaction):
+	await interaction.response.defer()
 	request = service.instances().start(project=project, zone=zone, instance=instance)
 	response = request.execute()
 	if response["status"] == "RUNNING":
@@ -105,11 +107,13 @@ async def start(interaction: discord.Interaction):
 @app_commands.check(checkifbased)
 @client.tree.command(name="stop", description="stop the game server instance")
 async def stop(interaction: discord.Interaction):
+	await interaction.response.defer()
 	service.instances().stop(project=project, zone=zone, instance=instance).execute()
 	await interaction.response.send_message("Server shutting down.")
 
 @client.tree.command(name="players", description="get list of players on the server")
 async def players(interaction: discord.Interaction):
+	await interaction.response.defer()
 	statuscheck = serverstatus()
 	if statuscheck == 1 or statuscheck == 3:
 		await interaction.response.send_message("The server is currently offline.")
