@@ -45,7 +45,8 @@ with open("configuration.json", "r") as config:
 
 service = discovery.build("compute", "v1")
 
-server_ip = service.instances().get(project=project, zone=zone, instance=instance).execute()["networkInterfaces"][0]["accessConfigs"][0]["natIP"]
+def updateserverip():
+	return service.instances().get(project=project, zone=zone, instance=instance).execute()["networkInterfaces"][0]["accessConfigs"][0]["natIP"]
 
 def checkifbased(interaction: discord.Interaction) -> bool:
 	if interaction.user.id == owner_id:
@@ -113,9 +114,13 @@ async def players(interaction: discord.Interaction):
 	if statuscheck == 1 or statuscheck == 3:
 		await interaction.response.send_message("The server is currently offline.")
 		return
-
-	with rcon(server_ip, rconconf["port"], passwd=rconconf["password"]) as connection:
-		response = connection.run('playerlist')
+	server_ip = updateserverip()
+	try:
+		with rcon(server_ip, rconconf["port"], passwd=rconconf["password"]) as connection:
+			response = connection.run('playerlist')
+	except:
+		await interaction.response.send_message("something went wrong.")
+		return
 
 	players = int
 	playerlist = ""
