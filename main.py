@@ -4,8 +4,7 @@ import os
 from discord import app_commands
 from googleapiclient import discovery
 from rcon.source import Client as rcon
-
-PRIMARY_GUILD = discord.Object(id=952505243072094258)
+from pickle import dump
 
 DEFAULT_CONFIG = {
     "token": "",
@@ -97,6 +96,9 @@ async def start(interaction: discord.Interaction):
 	await interaction.response.defer()
 	request = service.instances().start(project=project, zone=zone, instance=instance)
 	response = request.execute()
+	with open("prev_check.pk", "w+b") as fi:
+		dump(False, fi)
+	fi.close()
 	if response["status"] == "RUNNING":
 		await interaction.followup.send(f"The server is booting.\nConnect in a few minutes via the Mordhau server browser search for `flom training grounds`.\nPassword is `{server_pass}`")
 	elif response["status"] == "STOPPING":

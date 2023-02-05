@@ -28,8 +28,8 @@ except KeyError:
 	
 try:
 	with open("prev_check.pk", "rb") as fi:
-			prev_check = pickle.load(fi)
-			fi.close()
+		prev_check = pickle.load(fi)
+	fi.close()
 except:
 	with open("prev_check.pk", "w+b") as fi:
 		pickle.dump(False, fi)
@@ -40,15 +40,16 @@ with rcon(server_ip, port, passwd=password) as connection:
 		response = connection.run('playerlist')
 		if response.count("\n") == 0:
 			zero_players = True
-			print("there are zero players")
 		else:
 			zero_players = False
-			print("there are players")
 		
 
 if prev_check == True and zero_players == True:
-	print("shutting instance down")
 	service.instances().stop(project=project, zone=zone, instance=instance).execute()
+	zero_players = False
+	with open("prev_check.pk", "wb") as fi:
+		pickle.dump(zero_players, fi)
+	fi.close()
 else:
 	with open("prev_check.pk", "wb") as fi:
 		pickle.dump(zero_players, fi)
