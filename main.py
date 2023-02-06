@@ -145,4 +145,24 @@ async def players(interaction: discord.Interaction):
 	else:
 		await interaction.followup.send(f"There are no players online.")
 
+@app_commands.guild_only()
+@app_commands.checks.has_permissions(manage_messages=True)
+@app_commands.checks.bot_has_permissions(manage_messages=True)
+@client.tree.command(name="cleanup", description="clean up messages")
+async def cleanup(interaction: discord.Interaction, amount: int, botonly: bool = False):
+	await interaction.response.defer(ephemeral=True)
+	if amount == 0:
+		await interaction.followup.send("How many messages do you want me to delete?")
+		return
+	
+	def is_me(m):
+		return m.author == client.user
+
+	if botonly:
+		await interaction.channel.purge(limit= amount, check= is_me)
+	elif botonly == False:
+		await interaction.channel.purge(limit= amount)
+
+	await interaction.followup.send(f"Deleted {amount} messages.", ephemeral=True)
+
 client.run(token)
