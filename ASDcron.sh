@@ -2,6 +2,6 @@
 
 source ~/babel/bin/activate
 
-cd ~/babelv2/
+cd ~/babelv2/tools
 
 python autoshutdown.py
