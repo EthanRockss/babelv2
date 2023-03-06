@@ -88,6 +88,8 @@ class Utils(commands.Cog):
 	async def message_edited(self, before: discord.Message, after: discord.Message):
 		if before.author.bot == True:
 			return
+		if before.clean_content == after.clean_content:
+			return
 		logchannel = discord.utils.get(before.guild.text_channels, id=getchannelid(before.guild.id))
 		embedvar = discord.Embed(title="Edited Message", color=discord.Color.orange())
 		embedvar.set_author(name = before.author.name + before.author.discriminator)
