@@ -18,10 +18,6 @@ class BabelClient(commands.Bot):
 		for i in self.initial_extensions:
 			await self.load_extension(i)
 
-	async def close(self):
-		await super().close()
-		await self.session.close()
-
 	async def on_ready(self):
 		print(f"We have logged in as {self.user}")
 		print(discord.__version__)
