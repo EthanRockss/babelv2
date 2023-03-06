@@ -152,6 +152,6 @@ cython_debug/
 #.idea/
 
 *.json
+*.db
 Cogs/Data/Markov.txt
-Cogs/Cogs.db
 prev_check.pk

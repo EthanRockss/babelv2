@@ -8,7 +8,7 @@ token, PRIMARY_GUILD = Config.loadconfig("10000010")
 
 class BabelClient(commands.Bot):
 	def __init__(self):
-		intents = discord.Intents().default()
+		intents = discord.Intents().all()
 		super().__init__(command_prefix=commands.when_mentioned,
 		   				 intents=intents)
 		
