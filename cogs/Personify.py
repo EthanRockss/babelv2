@@ -27,18 +27,18 @@ class Personify(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def message_sent(self, message: discord.Message):
-        print("message recieved")
+
         if message.author.bot:
             return
-        print("message passed tests")
+
         if message.content != None and "babel" not in message.content:
             appendmarkovfile(message.clean_content)
-            print("saving message")
+
         if "babel" in message.content.lower():
             randnum = randint(50, 100)
         else:
             randnum = randint(-20, 80)
-        print("generated number: " + str(randnum))
+
         if 100 >= randnum >= 75:
             gentext = generatemarkovtext()
             if gentext != None:
