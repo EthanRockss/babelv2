@@ -12,7 +12,7 @@ class BabelClient(commands.Bot):
 		super().__init__(command_prefix=commands.when_mentioned,
 		   				 intents=intents)
 		
-		self.initial_extensions = ["cogs.GoogleInstance", "cogs.Utils"]
+		self.initial_extensions = ["cogs.GoogleInstance", "cogs.Utils", "cogs.Personify"]
 
 	async def setup_hook(self):
 		for i in self.initial_extensions:
