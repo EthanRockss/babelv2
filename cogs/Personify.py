@@ -11,7 +11,7 @@ def appendmarkovfile(text:str):
     markov.close()
 
 def generatemarkovtext() -> str:
-    with open("Cogs/data/markov.txt", "r", encoding="utf-8") as markov:
+    with open("cogs/data/markov.txt", "r", encoding="utf-8") as markov:
         text = markov.read()
 
         textmod = markovify.Text(text)
