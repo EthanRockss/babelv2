@@ -15,7 +15,7 @@ def generatemarkovtext() -> str:
         text = markov.read()
 
         textmod = markovify.Text(text)
-        gentext = textmod.make_short_sentence(175)
+        gentext = textmod.make_short_sentence(125)
 
     markov.close()
     return gentext
@@ -31,6 +31,10 @@ class Personify(commands.Cog):
         if message.author.bot:
             return
 
+        for i in message.mentions:
+            if i.bot == True:
+                return
+
         if message.content != None and "babel" not in message.content:
             appendmarkovfile(message.clean_content)
 
@@ -40,6 +44,7 @@ class Personify(commands.Cog):
             randnum = randint(-20, 80)
 
         if 100 >= randnum >= 75:
+            await message.channel.typing()
             gentext = generatemarkovtext()
             if gentext != None:
                 try:
