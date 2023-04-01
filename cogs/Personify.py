@@ -15,7 +15,7 @@ def generatemarkovtext() -> str:
         text = markov.read()
 
         textmod = markovify.Text(text)
-        gentext = textmod.make_short_sentence(300)
+        gentext = textmod.make_short_sentence(175)
 
     markov.close()
     return gentext
