@@ -26,7 +26,8 @@ class Utils(commands.Cog):
 	@commands.is_owner()
 	async def sync(self, ctx: Context):
 		for guild in ctx.bot.guilds:
-			await ctx.bot.tree.sync(guild=guild)
+			coms = await ctx.bot.tree.sync(guild=guild)
+			await ctx.send(f"Synced {len(coms)} to {guild.name}")
 
 	@app_commands.guild_only()
 	@app_commands.checks.has_permissions(manage_messages=True)
